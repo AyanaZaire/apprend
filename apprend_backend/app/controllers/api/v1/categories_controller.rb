@@ -6,6 +6,7 @@ class Api::V1::CategoriesController < ApplicationController
   end
 
   def show
+    
   end
 
   def new
