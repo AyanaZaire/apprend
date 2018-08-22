@@ -1,4 +1,6 @@
 body {
 	display: grid;
-	grid-template-columns: 2fr 8fr
+	grid-template-columns: 2fr 8fr;
+	width: 80%;
+	margin: 0 auto;
 }

@@ -1,4 +1,5 @@
 const allCourses = 'http://localhost:3000/api/v1/courses'
+const cards = document.getElementsByClassName("ui link cards")[0]
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -7,15 +8,51 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 function renderCourse(course) {
-  let ul = document.getElementById('list')
-  let li = document.createElement('li')
-  li.id = `li-${course.id}`
+  let cardDiv = document.createElement('div')
+  cardDiv.setAttribute("class", "card")
+  cardDiv.id = `div-${course.id}`
+  cards.append(cardDiv)
 
-  ul.appendChild(li)
+    let imgDiv = document.createElement('div')
+    imgDiv.setAttribute("class", "image")
+      let img = document.createElement('img')
+      img.setAttribute("src", course.img_url)
+      imgDiv.append(img)
+    cardDiv.append(imgDiv)
 
-  li.innerText = course.title
+    let contentDiv = document.createElement('div')
+    contentDiv.setAttribute("class", "content")
+    cardDiv.append(contentDiv)
 
-  li.addEventListener('click', titleClickHandler)
+      let headerDiv = document.createElement('div')
+      headerDiv.setAttribute("class", "header")
+      headerDiv.innerHTML = course.title
+      contentDiv.append(headerDiv)
+
+      let metaDiv = document.createElement('div')
+      metaDiv.setAttribute("class", "meta")
+      metaDiv.innerHTML = `<a>${course.category.name}</a>`
+      contentDiv.append(metaDiv)
+
+      let descDiv = document.createElement('div')
+      descDiv.setAttribute("class", "description")
+      descDiv.innerHTML = course.description
+      contentDiv.append(descDiv)
+
+   let extraContent = document.createElement('div')
+   extraContent.setAttribute("class", "extra content")
+   cardDiv.append(extraContent)
+    let date = document.createElement('span')
+    date.setAttribute("class", "right floated")
+    date.innerText = `${course.date}`
+    let location = document.createElement('span')
+    location.innerText = course.location.city
+    extraContent.append(date)
+    extraContent.append(location)
+
+
+
+  cardDiv.addEventListener('click', titleClickHandler)
 }
 
 function getCourses(){
