@@ -24,8 +24,8 @@ ActiveRecord::Schema.define(version: 2018_08_21_212347) do
   create_table "courses", force: :cascade do |t|
     t.string "title"
     t.string "description"
-    t.time "time"
-    t.date "date"
+    t.string "time"
+    t.string "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "category_id"
