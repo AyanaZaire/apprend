@@ -1,6 +1,25 @@
-body {
+
+.body {
 	width: 80%;
 	margin: 0 auto;
+}
+
+.topheader {
+  height: 600px;
+  background-image: url(./images/headerbg.jpg);
+  background-position: center;
+  background-size: cover;
+}
+
+.form {
+	width: 50%;
+	margin: 0 auto;
+}
+
+#main-page-title {
+  font-family: sans-serif;
+  color: white;
+  font-size: 50px;
 }
 
 .container {
