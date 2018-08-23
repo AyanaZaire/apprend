@@ -1,10 +1,13 @@
 const allCourses = 'http://localhost:3000/api/v1/courses'
 const cards = document.getElementsByClassName("ui link cards")[0]
+const form = document.querySelector("#course_form");
 
 
 document.addEventListener('DOMContentLoaded', () => {
   // alert('LOADED')
   getCourses()
+  form.addEventListener("submit", addCourse)
+
 })
 
 function renderCourse(course) {
@@ -55,6 +58,57 @@ function renderCourse(course) {
   cardDiv.addEventListener('click', titleClickHandler)
 }
 
+function addCourse() {
+  let name = form.querySelector("#course_name").querySelector("input").value
+  let desc = form.querySelector("#course_desc").querySelector("textarea").value
+  let category = form.querySelector("#course_category").querySelector("select").value
+  category = parseInt(category)
+  let location = form.querySelector("#course_location").querySelector("select").value
+  location = parseInt(location)
+  let time = form.querySelector("#course_time").querySelector("input").value
+  let date = form.querySelector("#course_date").querySelector("input").value
+  // let course = {
+  //   "title": name,
+  //   "description": desc,
+  //   "time": time,
+  //   "date": date,
+  //   "category_id": parseInt(category),
+  //   "location_id": parseInt(location)
+  // }
+
+  postCourse(name, desc, time, date, category, location);
+}
+
+
+function postCourse(name, desc, time, date, category, location){
+ debugger
+  fetch (`http://localhost:3000/api/v1/courses/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({
+      title: name,
+      description: desc,
+      time: time,
+      date: date,
+      img_url: "https://vignette.wikia.nocookie.net/majorette/images/7/74/Logo-hello-kitty.jpg",
+      category_id: category,
+      location_id: location
+    })
+  })
+    .then(response => {
+      debugger
+      response.json()
+    })
+    .then(json => {
+
+      console.log(json)
+    })
+}
+
+
 function getCourses(){
   fetch(allCourses)
   .then(respsonse => respsonse.json())
@@ -66,6 +120,7 @@ function getCourses(){
     })
   });
 }
+
 
 
 function titleClickHandler(event){
