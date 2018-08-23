@@ -5,6 +5,7 @@ const cards = document.getElementsByClassName("ui link cards")[0]
 document.addEventListener('DOMContentLoaded', () => {
   // alert('LOADED')
   getCourses()
+  categoryClickHandler()
 })
 
 function renderCourse(course) {
@@ -46,7 +47,7 @@ function renderCourse(course) {
     date.setAttribute("class", "right floated")
     date.innerText = `${course.date}`
     let location = document.createElement('span')
-    location.innerText = course.location.city
+    location.innerHTML = `<i class="globe icon"></i> ${course.location.city}`
     extraContent.append(date)
     extraContent.append(location)
 
@@ -70,7 +71,8 @@ function getCourses(){
 
 function titleClickHandler(event){
   // console.log(event)
-  let id = event.target.id.split('-')[1]
+  let cardDiv = event.target.parentNode.parentNode
+  let id = cardDiv.id.split('-')[1]
   fetch(`http://localhost:3000/api/v1/courses/${id}`)
   .then(response => response.json())
   .then(json => {
@@ -81,32 +83,139 @@ function titleClickHandler(event){
 function renderShowCourse(json){
   let show = document.getElementById('show-panel')
   show.innerHTML = ''
-  let h2 = document.createElement('h2')
+
   let img = document.createElement('img')
-  let p = document.createElement('p')
-  let locationH3 = document.createElement('h3')
-  let categoryH3 = document.createElement('h3')
-  let locationUl = document.createElement('ul')
-  let categoryUl = document.createElement('ul')
-  // let li = document.createElement('li')
-  // let button = document.createElement('button')
-  // button.id = `${json.id}`
-
-  show.appendChild(h2)
+  img.className = "ui fluid image"
   show.appendChild(img)
-  show.appendChild(p)
-  show.appendChild(locationH3)
-  show.appendChild(locationUl)
-  show.appendChild(categoryH3)
-  show.appendChild(categoryUl)
-  // ul.appendChild(li)
-  // show.appendChild(button)
-
-  h2.innerHTML = json.title
   img.src = json.img_url
-  p.innerHTML = json.description
-  locationH3.innerHTML = 'Location:'
-  locationUl.innerHTML = `<li>${json.location.city}</li>`
-  categoryH3.innerHTML = 'Category:'
-  categoryUl.innerHTML += `<li>${json.category.name}</li>`
+
+  let segDiv = document.createElement('div')
+  segDiv.className = "ui segments"
+  show.appendChild(segDiv)
+
+    let titleDiv = document.createElement('div')
+    titleDiv.className = "ui segment"
+    segDiv.appendChild(titleDiv)
+    titleDiv.innerHTML = `
+      <h2 class="ui header">${json.title}
+      <div class="sub header">${json.category.name}</div>
+      </h2>
+    `
+
+    let descDiv = document.createElement('div')
+    descDiv.className = "ui segment"
+    segDiv.appendChild(descDiv)
+    descDiv.innerHTML = `
+      <h3>Description:</h3>
+      <p>${json.description}</p>
+    `
+
+  let horiDiv = document.createElement('div')
+  horiDiv.className = "ui horizontal segments"
+  segDiv.appendChild(horiDiv)
+
+    let locDiv = document.createElement('div')
+    locDiv.className = "ui segment"
+    horiDiv.appendChild(locDiv)
+    locDiv.innerHTML = `<i class="globe icon"></i> ${json.location.city}`
+
+    let timeDiv = document.createElement('div')
+    timeDiv.className = "ui segment"
+    horiDiv.appendChild(timeDiv)
+    timeDiv.innerHTML = `<i class="clock outline icon"></i> ${json.time}`
+
+    let dateDiv = document.createElement('div')
+    dateDiv.className = "ui segment"
+    horiDiv.appendChild(dateDiv)
+    dateDiv.innerHTML = `<i class="calendar alternate icon"></i> ${json.date}`
+}
+
+
+function categoryClickHandler(){
+  let art = document.getElementById('art')
+  let textile = document.getElementById('textile')
+  let music = document.getElementById('music')
+  let tech = document.getElementById('tech')
+  let design = document.getElementById('design')
+
+  art.addEventListener('click', artFilter)
+  textile.addEventListener('click', textileFilter)
+  music.addEventListener('click', musicFilter)
+  tech.addEventListener('click', techFilter)
+  design.addEventListener('click', designFilter)
+}
+
+function artFilter(event){
+  if(event.target.innerText === 'Art') {
+    fetch(allCourses)
+    .then(respsonse => respsonse.json())
+    .then(json => {
+      cards.innerHTML = ''
+      json.forEach( course => {
+        if (course.category.name == 'Arts') {
+          renderCourse(course)
+        }
+      })
+    })
+  }
+}
+
+function textileFilter(event){
+  if(event.target.innerText === 'Textile') {
+    fetch(allCourses)
+    .then(respsonse => respsonse.json())
+    .then(json => {
+      cards.innerHTML = ''
+      json.forEach( course => {
+        if (course.category.name == 'Textile') {
+          renderCourse(course)
+        }
+      })
+    })
+  }
+}
+
+function musicFilter(event){
+  if(event.target.innerText === 'Music') {
+    fetch(allCourses)
+    .then(respsonse => respsonse.json())
+    .then(json => {
+      cards.innerHTML = ''
+      json.forEach( course => {
+        if (course.category.name == 'Music') {
+          renderCourse(course)
+        }
+      })
+    })
+  }
+}
+
+function techFilter(event){
+  if(event.target.innerText === 'Technology') {
+    fetch(allCourses)
+    .then(respsonse => respsonse.json())
+    .then(json => {
+      cards.innerHTML = ''
+      json.forEach( course => {
+        if (course.category.name == 'Technology') {
+          renderCourse(course)
+        }
+      })
+    })
+  }
+}
+
+function designFilter(event){
+  if(event.target.innerText === 'Design') {
+    fetch(allCourses)
+    .then(respsonse => respsonse.json())
+    .then(json => {
+      cards.innerHTML = ''
+      json.forEach( course => {
+        if (course.category.name == 'Design') {
+          renderCourse(course)
+        }
+      })
+    })
+  }
 }
