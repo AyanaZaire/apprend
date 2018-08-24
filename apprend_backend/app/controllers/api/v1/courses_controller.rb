@@ -29,4 +29,5 @@ private
     params.require(:course).permit(:title, :description, :time, :date, :img_url, :category_id, :location_id)
   end
 
+  
 end
