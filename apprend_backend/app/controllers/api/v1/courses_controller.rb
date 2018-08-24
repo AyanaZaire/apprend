@@ -14,13 +14,14 @@ class Api::V1::CoursesController < ApplicationController
     # end
   end
 
-  def new
-    @course = Coruse.new
-  end
-
   def create
     @course = Course.create(course_params)
     render json: @course
+  end
+
+  def update
+    Course.find(params[:id]).update(course_params)
+    render json: Course.find(params[:id])
   end
 
 private
