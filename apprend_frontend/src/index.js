@@ -1,12 +1,14 @@
 const allCourses = 'http://localhost:3000/api/v1/courses'
 const cards = document.getElementsByClassName("ui link cards")[0]
 const form = document.querySelector("#course_form");
+const searchButton = document.querySelector("#search")
 
 
 document.addEventListener('DOMContentLoaded', () => {
   // alert('LOADED')
   getCourses()
   form.addEventListener("submit", addCourse)
+  searchButton.addEventListener("click", searchCourse)
   categoryClickHandler()
 })
 
@@ -284,4 +286,27 @@ function deleteCourse(event) {
   fetch (`http://localhost:3000/api/v1/courses/${courseId}`, {
     method: "DELETE"
   })
+}
+
+
+function searchCourse(event) {
+  event.preventDefault()
+  let bodyDiv = document.querySelector(".body")
+  let searchDiv = document.querySelector(".search")
+  searchDiv.innerHTML = `
+    <form class="ui form", id="search_form">
+      <div class="field" id="course_title">
+        <input type="text" name="course-name" placeholder="Search by Course Title...">
+      </div>
+        <button class="ui grey button" type="submit">Search</button>
+    </form>
+  `
+  let searchForm = document.querySelector("#search_form")
+  let searchFormButton = searchForm.addEventListener('submit', renderSearchResults)
+}
+
+function renderSearchResults(event) {
+  event.preventDefault()
+  let searchKeyWord = document.querySelector("#course_title").querySelector("input").value
+  
 }
