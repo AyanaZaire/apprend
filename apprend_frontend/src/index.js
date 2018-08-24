@@ -148,6 +148,12 @@ function renderShowCourse(json){
       </h2>
     `
 
+      let deleteButton = document.createElement('button')
+      deleteButton.innerText = "Delete"
+      deleteButton.setAttribute("data-id", json.id)
+      deleteButton.addEventListener('click', deleteCourse)
+      titleDiv.append(deleteButton)
+
     let descDiv = document.createElement('div')
     descDiv.className = "ui segment"
     segDiv.appendChild(descDiv)
@@ -174,6 +180,8 @@ function renderShowCourse(json){
     dateDiv.className = "ui segment"
     horiDiv.appendChild(dateDiv)
     dateDiv.innerHTML = `<i class="calendar alternate icon"></i> ${json.date}`
+
+
 }
 
 
@@ -264,4 +272,16 @@ function designFilter(event){
       })
     })
   }
+}
+
+function deleteCourse(event) {
+  event.preventDefault()
+  let courseId = event.target.getAttribute("data-id")
+  let course = document.querySelector(`#div-${courseId}`)
+  course.innerHTML = ""
+  document.querySelector("#show-panel").innerHTML = ""
+
+  fetch (`http://localhost:3000/api/v1/courses/${courseId}`, {
+    method: "DELETE"
+  })
 }
