@@ -1,12 +1,14 @@
 const allCourses = 'http://localhost:3000/api/v1/courses'
 const cards = document.getElementsByClassName("ui link cards")[0]
 const form = document.querySelector("#course_form");
+const searchButton = document.querySelector("#search")
 
 
 document.addEventListener('DOMContentLoaded', () => {
   // alert('LOADED')
   getCourses()
   form.addEventListener("submit", addCourse)
+  searchButton.addEventListener("click", searchCourse)
   categoryClickHandler()
 })
 
@@ -68,12 +70,12 @@ function addCourse() {
   location = parseInt(location)
   let time = form.querySelector("#course_time").querySelector("input").value
   let date = form.querySelector("#course_date").querySelector("input").value
-
-  postCourse(name, desc, time, date, category, location);
+  let img_url = form.querySelector("#course_image").querySelector("input").value
+  postCourse(name, desc, time, date, img_url, category, location);
 }
 
 
-function postCourse(name, desc, time, date, category, location){
+function postCourse(name, desc, time, date, img_url, category, location){
   fetch (`http://localhost:3000/api/v1/courses/`, {
     method: "POST",
     headers: {
@@ -85,7 +87,7 @@ function postCourse(name, desc, time, date, category, location){
       description: desc,
       time: time,
       date: date,
-      img_url: "https://vignette.wikia.nocookie.net/majorette/images/7/74/Logo-hello-kitty.jpg",
+      img_url: img_url,
       category_id: category,
       location_id: location
     })
@@ -148,13 +150,19 @@ function renderShowCourse(json){
       </h2>
     `
 
-    let editButton = document.createElement('button')
-    editButton.id = json.id
-    editButton.className = "ui grey button"
-    titleDiv.appendChild(editButton)
-    editButton.innerText = 'Edit'
+  let deleteButton = document.createElement('button')
+  deleteButton.innerText = "Delete"
+  deleteButton.setAttribute("data-id", json.id)
+  deleteButton.addEventListener('click', deleteCourse)
+  titleDiv.append(deleteButton)
+  
+  let editButton = document.createElement('button')
+  editButton.id = json.id
+  editButton.className = "ui grey button"
+  titleDiv.appendChild(editButton)
+  editButton.innerText = 'Edit'
 
-    editButton.addEventListener('click', editButtonClickHandler)
+  editButton.addEventListener('click', editButtonClickHandler)
 
     let descDiv = document.createElement('div')
     descDiv.className = "ui segment"
@@ -182,6 +190,8 @@ function renderShowCourse(json){
     dateDiv.className = "ui segment"
     horiDiv.appendChild(dateDiv)
     dateDiv.innerHTML = `<i class="calendar alternate icon"></i> ${json.date}`
+
+
 }
 
 function categoryClickHandler(){
@@ -273,6 +283,40 @@ function designFilter(event){
   }
 }
 
+
+function deleteCourse(event) {
+  event.preventDefault()
+  let courseId = event.target.getAttribute("data-id")
+  let course = document.querySelector(`#div-${courseId}`)
+  course.innerHTML = ""
+  document.querySelector("#show-panel").innerHTML = ""
+
+  fetch (`http://localhost:3000/api/v1/courses/${courseId}`, {
+    method: "DELETE"
+  })
+}
+
+
+function searchCourse(event) {
+  event.preventDefault()
+  let bodyDiv = document.querySelector(".body")
+  let searchDiv = document.querySelector(".search")
+  searchDiv.innerHTML = `
+    <form class="ui form", id="search_form">
+      <div class="field" id="course_title">
+        <input type="text" name="course-name" placeholder="Search by Course Title...">
+      </div>
+        <button class="ui grey button" type="submit">Search</button>
+    </form>
+  `
+  let searchForm = document.querySelector("#search_form")
+  let searchFormButton = searchForm.addEventListener('submit', renderSearchResults)
+}
+
+function renderSearchResults(event) {
+  event.preventDefault()
+  let searchKeyWord = document.querySelector("#course_title").querySelector("input").value
+  
 function editButtonClickHandler(event){
   let id = event.target.id
   let segDiv = document.getElementById('seg-div')
