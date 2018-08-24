@@ -56,6 +56,7 @@ function renderCourse(course) {
     extraContent.append(location)
 
   let button = document.getElementById("all-courses")
+
   button.addEventListener('click', getCourses)
 
   cardDiv.addEventListener('click', titleClickHandler)
@@ -117,6 +118,7 @@ function getCourses(){
 
 function titleClickHandler(event){
   // console.log(event)
+  event.preventDefault()
   let cardDiv = event.target.parentNode.parentNode
   let id = cardDiv.id.split('-')[1]
   fetch(`http://localhost:3000/api/v1/courses/${id}`)
@@ -127,7 +129,7 @@ function titleClickHandler(event){
 }
 
 function renderShowCourse(json){
-  let show = document.getElementById('show-panel')
+  let show = document.querySelector('.show')
   show.id = `show-${json.id}`
   show.innerHTML = ''
 
@@ -151,11 +153,12 @@ function renderShowCourse(json){
     `
 
   let deleteButton = document.createElement('button')
+  deleteButton.className = "ui grey button"
   deleteButton.innerText = "Delete"
   deleteButton.setAttribute("data-id", json.id)
   deleteButton.addEventListener('click', deleteCourse)
   titleDiv.append(deleteButton)
-  
+
   let editButton = document.createElement('button')
   editButton.id = json.id
   editButton.className = "ui grey button"
@@ -289,7 +292,7 @@ function deleteCourse(event) {
   let courseId = event.target.getAttribute("data-id")
   let course = document.querySelector(`#div-${courseId}`)
   course.innerHTML = ""
-  document.querySelector("#show-panel").innerHTML = ""
+  document.querySelector(".show").innerHTML = ""
 
   fetch (`http://localhost:3000/api/v1/courses/${courseId}`, {
     method: "DELETE"
@@ -311,18 +314,37 @@ function searchCourse(event) {
   `
   let searchForm = document.querySelector("#search_form")
   let searchFormButton = searchForm.addEventListener('submit', renderSearchResults)
+
 }
 
 function renderSearchResults(event) {
   event.preventDefault()
   let searchKeyWord = document.querySelector("#course_title").querySelector("input").value
-  
+  let courseCards = document.getElementsByClassName("ui link cards")[0]
+
+  fetch (`http://localhost:3000/api/v1/courses/`)
+    .then(response => response.json())
+    .then(json => {
+      json.forEach(course => {
+        if (searchKeyWord === course.title) {
+          debugger
+          courseCards.innerHTML = ""
+          document.querySelector(".show").innerHTML = ""
+          renderCourse(course)
+        } else {
+          document.querySelector(".show").innerHTML = ""
+          courseCards.innerHTML = ""
+        }
+      })
+    })
+}
+
+
 function editButtonClickHandler(event){
   let id = event.target.id
   let segDiv = document.getElementById('seg-div')
-  
-  let title = event.target.parentNode.querySelector('h2').innerText
-  debugger
+
+  let courseTitle = event.target.parentNode.querySelector('h2').innerText
 
     let formDiv = document.createElement('div')
     formDiv.className = "ui segment"
