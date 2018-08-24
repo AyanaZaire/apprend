@@ -55,7 +55,8 @@ function renderCourse(course) {
     extraContent.append(date)
     extraContent.append(location)
 
-
+  let button = document.getElementById("all-courses")
+  button.addEventListener('click', getCourses)
 
   cardDiv.addEventListener('click', titleClickHandler)
 }
@@ -75,7 +76,6 @@ function addCourse() {
 
 
 function postCourse(name, desc, time, date, img_url, category, location){
- debugger
   fetch (`http://localhost:3000/api/v1/courses/`, {
     method: "POST",
     headers: {
@@ -93,11 +93,9 @@ function postCourse(name, desc, time, date, img_url, category, location){
     })
   })
     .then(response => {
-      debugger
       response.json()
     })
     .then(json => {
-
       console.log(json)
     })
 }
@@ -130,6 +128,7 @@ function titleClickHandler(event){
 
 function renderShowCourse(json){
   let show = document.getElementById('show-panel')
+  show.id = `show-${json.id}`
   show.innerHTML = ''
 
   let img = document.createElement('img')
@@ -138,6 +137,7 @@ function renderShowCourse(json){
   img.src = json.img_url
 
   let segDiv = document.createElement('div')
+  segDiv.id = 'seg-div'
   segDiv.className = "ui segments"
   show.appendChild(segDiv)
 
@@ -150,11 +150,19 @@ function renderShowCourse(json){
       </h2>
     `
 
-      let deleteButton = document.createElement('button')
-      deleteButton.innerText = "Delete"
-      deleteButton.setAttribute("data-id", json.id)
-      deleteButton.addEventListener('click', deleteCourse)
-      titleDiv.append(deleteButton)
+  let deleteButton = document.createElement('button')
+  deleteButton.innerText = "Delete"
+  deleteButton.setAttribute("data-id", json.id)
+  deleteButton.addEventListener('click', deleteCourse)
+  titleDiv.append(deleteButton)
+  
+  let editButton = document.createElement('button')
+  editButton.id = json.id
+  editButton.className = "ui grey button"
+  titleDiv.appendChild(editButton)
+  editButton.innerText = 'Edit'
+
+  editButton.addEventListener('click', editButtonClickHandler)
 
     let descDiv = document.createElement('div')
     descDiv.className = "ui segment"
@@ -185,7 +193,6 @@ function renderShowCourse(json){
 
 
 }
-
 
 function categoryClickHandler(){
   let art = document.getElementById('art')
@@ -276,6 +283,7 @@ function designFilter(event){
   }
 }
 
+
 function deleteCourse(event) {
   event.preventDefault()
   let courseId = event.target.getAttribute("data-id")
@@ -309,4 +317,93 @@ function renderSearchResults(event) {
   event.preventDefault()
   let searchKeyWord = document.querySelector("#course_title").querySelector("input").value
   
+function editButtonClickHandler(event){
+  let id = event.target.id
+  let segDiv = document.getElementById('seg-div')
+  
+  let title = event.target.parentNode.querySelector('h2').innerText
+  debugger
+
+    let formDiv = document.createElement('div')
+    formDiv.className = "ui segment"
+    segDiv.appendChild(formDiv)
+    formDiv.innerHTML = `<div class=‘form’>
+    <form class='ui form' id='course_form'>
+             <h3>EDIT A COURSE</h3>
+       <div class='field' id='course_name'>
+         <input type='text' name='course-title' placeholder='Title' value = ''>
+       </div>
+         <div class='field' id='course_desc'>
+         <textarea rows='4' placeholder='Description'></textarea>
+       </div>
+         <div class='field' id='course_image'>
+         <input type='text' name='course-image'  placeholder='Image URL'></input>
+       </div>
+         <div class='fields'>
+             <div class='field' id='course_category'>
+                 <label name='Category'>Category</label>
+                 <select name='categories'>
+                     <option value='1'>Arts</option>
+                     <option value='2'>Textile</option>
+                     <option value='3'>Music</option>
+                     <option value='4'>Technology</option>
+                     <option value='5'>Design</option>
+                 </select>
+           </div>
+             <div class='field' id='course_location'>
+                 <label name='location'>Location</label>
+                 <select name='location'>
+                   <option value='1'>Washington, D.C.</option>
+                   <option value='2'>New York</option>
+                   <option value='3'>Miami</option>
+                 </select>
+             </div>
+         </div>
+         <div class='fields'>
+             <div class='field' id='course_time'>
+                 <label name='time'>Time</label>
+                 <input type='time' name='time' placeholder='Time'>
+             </div>
+             <div class='field' id='course_date'>
+                 <label name='date'>Date</label>
+             <input type='date' name='date'>
+             </div>
+         </div>
+       <button id='submit_button' class='ui grey button' type='submit'>Submit</button>
+     </form>
+     </div>`
+
+  // let form = document.getElementById('course_form')
+  let title = form.querySelector("#course_name").querySelector("input").value
+  let desc = form.querySelector("#course_desc").querySelector("textarea").value
+  let category = form.querySelector("#course_category").querySelector("select").value
+  category = parseInt(category)
+  let location = form.querySelector("#course_location").querySelector("select").value
+  location = parseInt(location)
+  let time = form.querySelector("#course_time").querySelector("input").value
+  let date = form.querySelector("#course_date").querySelector("input").value
+
+  let submit = document.getElementById('submit-button')
+  submit.addEventListener('submit', patchFetch)
+
+  patchFetch(id, title, desc, category, location, time, date)
+}
+
+function patchFetch(id, title, desc, category, location, time, date){
+  fetch(`http://localhost:3000/api/v1/courses/${id}`, {
+    method: 'PATCH',
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      title: title,
+      description: desc,
+      category_id: category,
+      location_id: location,
+      time: time,
+      date: date
+    })
+  })
+  .then(response => response.json())
+  .then(json => {
+    console.log(json)
+  })
 }

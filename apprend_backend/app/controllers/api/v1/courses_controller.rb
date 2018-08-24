@@ -7,15 +7,6 @@ class Api::V1::CoursesController < ApplicationController
   def show
     @course = Course.find(params[:id])
     render json: @course
-    # respond_to do |format|
-    #   format.html { render :show }
-    #   format.json { render json: @course.to_json(only: [:title, :description, :id],
-    #     include: [category: {only: [:name]}, location: {only: [:city]} ]) }
-    # end
-  end
-
-  def new
-    @course = Coruse.new
   end
 
   def create
@@ -23,8 +14,13 @@ class Api::V1::CoursesController < ApplicationController
     render json: @course
   end
 
+  def update
+    Course.find(params[:id]).update(course_params)
+    render json: Course.find(params[:id])
+  end
+  
   def destroy
-    render json: Course.find(params[:id]).destroy
+   render json: Course.find(params[:id]).destroy
   end
 
 private
@@ -32,5 +28,3 @@ private
   def course_params
     params.require(:course).permit(:title, :description, :time, :date, :img_url, :category_id, :location_id)
   end
-
-end
