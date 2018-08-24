@@ -321,29 +321,24 @@ function searchCourse(event) {
 function renderSearchResults(event) {
   event.preventDefault()
   let searchKeyWord = document.querySelector("#course_title").querySelector("input").value
+  let courseCards = document.getElementsByClassName("ui link cards")[0]
+  fetch (`http://localhost:3000/api/v1/courses/`)
+    .then(response => response.json())
+    .then(json => {
+      json.forEach(course => {
+        if (searchKeyWord === course.title) {
+          debugger
+          courseCards.innerHTML = ""
+          document.querySelector(".show").innerHTML = ""
+          renderCourse(course)
+        } else {
+          document.querySelector(".show").innerHTML = ""
+          courseCards.innerHTML = ""
+        }
+      })
+    })
 }
 
-// function editButtonClickHandler(event){
-//   let id = event.target.id
-//   let segDiv = document.getElementById('seg-div')
-//   let courseCards = document.getElementsByClassName("ui link cards")[0]
-
-//   fetch (`http://localhost:3000/api/v1/courses/`)
-//     .then(response => response.json())
-//     .then(json => {
-//       json.forEach(course => {
-//         if (searchKeyWord === course.title) {
-//           debugger
-//           courseCards.innerHTML = ""
-//           document.querySelector(".show").innerHTML = ""
-//           renderCourse(course)
-//         } else {
-//           document.querySelector(".show").innerHTML = ""
-//           courseCards.innerHTML = ""
-//         }
-//       })
-//     })
-// }
 
 function editButtonClickHandler(event){
   let id = event.target.id
