@@ -100,7 +100,6 @@ function postCourse(name, desc, time, date, img_url, category, location){
     })
 }
 
-
 function getCourses(){
   fetch(allCourses)
   .then(respsonse => respsonse.json())
@@ -155,7 +154,7 @@ function renderShowCourse(json){
   deleteButton.setAttribute("data-id", json.id)
   deleteButton.addEventListener('click', deleteCourse)
   titleDiv.append(deleteButton)
-  
+
   let editButton = document.createElement('button')
   editButton.id = json.id
   editButton.className = "ui grey button"
@@ -173,25 +172,27 @@ function renderShowCourse(json){
     `
 
   let horiDiv = document.createElement('div')
+  horiDiv.id = 'horiDiv'
   horiDiv.className = "ui horizontal segments"
   segDiv.appendChild(horiDiv)
 
     let locDiv = document.createElement('div')
+    locDiv.id = "loc"
     locDiv.className = "ui segment"
     horiDiv.appendChild(locDiv)
     locDiv.innerHTML = `<i class="globe icon"></i> ${json.location.city}`
 
     let timeDiv = document.createElement('div')
+    timeDiv.id = "time"
     timeDiv.className = "ui segment"
     horiDiv.appendChild(timeDiv)
     timeDiv.innerHTML = `<i class="clock outline icon"></i> ${json.time}`
 
     let dateDiv = document.createElement('div')
+    dateDiv.id = "date"
     dateDiv.className = "ui segment"
     horiDiv.appendChild(dateDiv)
     dateDiv.innerHTML = `<i class="calendar alternate icon"></i> ${json.date}`
-
-
 }
 
 function categoryClickHandler(){
@@ -316,33 +317,28 @@ function searchCourse(event) {
 function renderSearchResults(event) {
   event.preventDefault()
   let searchKeyWord = document.querySelector("#course_title").querySelector("input").value
-  
+}
+
 function editButtonClickHandler(event){
   let id = event.target.id
   let segDiv = document.getElementById('seg-div')
-  
-  let title = event.target.parentNode.querySelector('h2').innerText
-  debugger
 
     let formDiv = document.createElement('div')
     formDiv.className = "ui segment"
     segDiv.appendChild(formDiv)
-    formDiv.innerHTML = `<div class=‘form’>
-    <form class='ui form' id='course_form'>
+    formDiv.innerHTML = `
+    <form class='ui form' id='edit-course-form'>
              <h3>EDIT A COURSE</h3>
-       <div class='field' id='course_name'>
-         <input type='text' name='course-title' placeholder='Title' value = ''>
+       <div class='field' id='edit-course-name'>
+         <input id='course-title' type='text' name='course-title' placeholder='Title' >
        </div>
-         <div class='field' id='course_desc'>
-         <textarea rows='4' placeholder='Description'></textarea>
-       </div>
-         <div class='field' id='course_image'>
-         <input type='text' name='course-image'  placeholder='Image URL'></input>
+         <div class='field' id='edit-course-desc'>
+         <textarea id='course-desc' rows='4' placeholder='Description'></textarea>
        </div>
          <div class='fields'>
-             <div class='field' id='course_category'>
+             <div class='field' id='edit-course-cat'>
                  <label name='Category'>Category</label>
-                 <select name='categories'>
+                 <select id='course-cat' name='categories'>
                      <option value='1'>Arts</option>
                      <option value='2'>Textile</option>
                      <option value='3'>Music</option>
@@ -350,9 +346,9 @@ function editButtonClickHandler(event){
                      <option value='5'>Design</option>
                  </select>
            </div>
-             <div class='field' id='course_location'>
+             <div class='field' id='edit-course-loc'>
                  <label name='location'>Location</label>
-                 <select name='location'>
+                 <select id='course-cat' name='location'>
                    <option value='1'>Washington, D.C.</option>
                    <option value='2'>New York</option>
                    <option value='3'>Miami</option>
@@ -360,36 +356,55 @@ function editButtonClickHandler(event){
              </div>
          </div>
          <div class='fields'>
-             <div class='field' id='course_time'>
+             <div class='field' id='edit-course-time'>
                  <label name='time'>Time</label>
-                 <input type='time' name='time' placeholder='Time'>
+                 <input id='course-time' type='time' name='time' placeholder='Time'>
              </div>
-             <div class='field' id='course_date'>
+             <div class='field' id='edit-course-date'>
                  <label name='date'>Date</label>
-             <input type='date' name='date'>
+             <input id='course-date' type='date' name='date'>
              </div>
          </div>
-       <button id='submit_button' class='ui grey button' type='submit'>Submit</button>
-     </form>
-     </div>`
+       <button id='edit-submit-button' class='ui grey button' type='submit'>Submit</button>
+     </form>`
 
-  // let form = document.getElementById('course_form')
-  let title = form.querySelector("#course_name").querySelector("input").value
-  let desc = form.querySelector("#course_desc").querySelector("textarea").value
-  let category = form.querySelector("#course_category").querySelector("select").value
+  // let courseTitle = event.target.parentNode.querySelector('h2').innerText
+  let courseDesc = event.target.parentNode.parentNode.querySelector('p').innerText
+  // let courseLoc = event.target.parentNode.parentNode.querySelector('#horiDiv').querySelector('#loc').innerText
+  // let courseTime = event.target.parentNode.parentNode.querySelector('#horiDiv').querySelector('#time').innerText
+  // let courseDate = event.target.parentNode.parentNode.querySelector('#horiDiv').querySelector('#date').innerText
+
+  // document.querySelector('#edit-course-name').querySelector('#course-title').value = courseTitle
+  document.querySelector('#edit-course-desc').querySelector('#course-desc').value = courseDesc
+
+  let courseForm = document.querySelector('#edit-course-form')
+  courseForm.addEventListener('submit', updateHandler)
+}
+
+function updateHandler(event){
+  event.preventDefault()
+  let id = event.target.parentNode.parentNode.parentNode.id.split('-')[1]
+  let courseForm = document.querySelector('#edit-course-form')
+  let title = courseForm.querySelector("#edit-course-name").querySelector("input").value
+  let desc = courseForm.querySelector("#edit-course-desc").querySelector("textarea").value
+  let category = courseForm.querySelector('#edit-course-cat').querySelector("select").value
   category = parseInt(category)
-  let location = form.querySelector("#course_location").querySelector("select").value
+  let location = courseForm.querySelector('#edit-course-loc').querySelector("select").value
   location = parseInt(location)
-  let time = form.querySelector("#course_time").querySelector("input").value
-  let date = form.querySelector("#course_date").querySelector("input").value
+  let time = courseForm.querySelector("#edit-course-time").querySelector("input").value
+  let date = courseForm.querySelector("#edit-course-date").querySelector("input").value
+// debugger
 
-  let submit = document.getElementById('submit-button')
-  submit.addEventListener('submit', patchFetch)
+  // let courseId = event.target.getAttribute("data-id")
+  let course = document.querySelector(`#div-${id}`)
+  course.innerHTML = ""
+  document.querySelector(".show").innerHTML = ""
 
   patchFetch(id, title, desc, category, location, time, date)
 }
 
 function patchFetch(id, title, desc, category, location, time, date){
+  // debugger
   fetch(`http://localhost:3000/api/v1/courses/${id}`, {
     method: 'PATCH',
     headers: {"Content-Type": "application/json"},
@@ -404,6 +419,7 @@ function patchFetch(id, title, desc, category, location, time, date){
   })
   .then(response => response.json())
   .then(json => {
-    console.log(json)
+    // console.log(json)
+    renderCourse(json)
   })
 }
